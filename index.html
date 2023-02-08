@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body>
+    <div>
+        <div class="form">
+            <div>
+                <h3>1.Click the download button below to get the output file where the given input find_words.txt has been replaced with equivalent french word from the french_dictionary.csv file</h3>
+                <button type="submit" onclick="submit()" >Download</button>
+                <br>
+                <hr>
+                <h5>2.Click the View book button below to view the contents from the shakespeare book from provided file:</h5>
+                <button type="submit" onclick="readTxt()" >View</button>
+                <p id="con"></p>
+            </div>
+        </div>
+    </div>
+    <script>
+        function readTxt(){
+            fetch('t8.shakespeare.txt')
+                .then(response => response.text())
+                .then(text => document.getElementById('con').innerText=text)
+                .catch(error => console.error(error));        
+        }
+        function submit() {
+            let input;
+            fetch('./find_words.txt')
+                .then(response => response.text())
+                .then(text => input = text)
+                .catch(error => console.error(error));
+
+            fetch('./french_dictionary.csv')
+                .then(response => response.text())
+                .then(text => qwe(text))
+                .catch(error => console.error(error));
+
+
+            function qwe(text) {
+                const dictionary = text.split('\n')
+                    .reduce((dict, line) => {
+                        const [english, french] = line.split(',');
+                        dict[english] = french;
+                        return dict;
+                    }, {});
+
+                if (input && dictionary !== undefined || null) {
+                    const output = input.replace(/\b\w+\b/g, (word) => dictionary[word] || word);
+                    console.log(output);
+                    let a = document.createElement('a');
+                    a.href = "data:application/octet-stream," + encodeURIComponent(output);
+                    a.download = 'output.txt';
+                    a.click();
+                }
+            }
+
+        }
+    </script>
+</body>
+
+</html>
